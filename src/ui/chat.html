@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        #chat-box {
+            width: 100%;
+            max-width: 500px;
+            height: 300px;
+            border: 1px solid #ccc;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            background-color: white;
+            padding: 10px;
+        }
+        #message-input {
+            width: 100%;
+            max-width: 500px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        #send-button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #send-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Chat</h1>
+    <div id="chat-box"></div>
+    <input type="text" id="message-input" placeholder="Type a message...">
+    <button id="send-button">Send</button>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const chatBox = document.getElementById('chat-box');
+        const messageInput = document.getElementById('message-input');
+        const sendButton = document.getElementById('send-button');
+
+        // 메시지 수신
+        socket.on('chat message', (msg) => {
+            const newMessage = document.createElement('div');
+            newMessage.textContent = msg;
+            chatBox.appendChild(newMessage);
+            chatBox.scrollTop = chatBox.scrollHeight; // 자동 스크롤
+        });
+
+        // 메시지 전송
+        sendButton.addEventListener('click', () => {
+            const message = messageInput.value;
+            if (message) {
+                socket.emit('chat message', message);
+                messageInput.value = ''; // 입력 필드 초기화
+            }
+        });
+    </script>
+</body>
+</html>

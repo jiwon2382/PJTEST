@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        #chat-box {
+            width: 90%;
+            max-width: 400px;
+            height: 300px;
+            border: 1px solid #ccc;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: white;
+        }
+        input[type="text"] {
+            width: 90%;
+            max-width: 300px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Real-Time Chat</h1>
+    <div id="chat-box"></div>
+    <input type="text" id="message" placeholder="Type a message..." />
+    <button id="send-button">Send</button>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        const chatBox = document.getElementById('chat-box');
+        const messageInput = document.getElementById('message');
+        const sendButton = document.getElementById('send-button');
+
+        // Listen for chat messages from the server
+        socket.on('chat message', (msg) => {
+            const newMessage = document.createElement('div');
+            newMessage.textContent = msg;
+            chatBox.appendChild(newMessage);
+            chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll
+        });
+
+        // Send a message to the server
+        sendButton.addEventListener('click', () => {
+            const message = messageInput.value;
+            if (message) {
+                socket.emit('chat message', message);
+                messageInput.value = ''; // Clear the input
+            }
+        });
+    </script>
+</body>
+</html>
